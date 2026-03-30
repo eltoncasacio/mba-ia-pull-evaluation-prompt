@@ -358,10 +358,8 @@ BUG REPORT ORIGINAL:
 USER STORY GERADA:
 {user_story}
 
-USER STORY ESPERADA (Referência):
-{reference}
-
 INSTRUÇÕES:
+# Note: Reference NOT shown to avoid anchoring bias
 
 Avalie o TOM da user story gerada com base nos critérios:
 
@@ -531,10 +529,8 @@ BUG REPORT ORIGINAL:
 USER STORY GERADA:
 {user_story}
 
-USER STORY ESPERADA (Referência):
-{reference}
-
 INSTRUÇÕES:
+# Note: Reference NOT shown to avoid anchoring bias
 
 Avalie o FORMATO da user story gerada:
 
