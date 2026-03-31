@@ -30,7 +30,7 @@ bug_to_user_story_v2:
 
     1. **Persona apropriada**: Use "cliente", "usuário", "administrador", "gerente", ou "o sistema" conforme contexto
     2. **Tom profissional e empático**: Foque no valor e impacto no usuário
-    3. **REGRA DE TOM**: Sempre enfatize valor no benefício. BUGS CRÍTICOS/SEGURANÇA: enfatizar urgência e mitigação de risco
+    3. **REGRA DE TOM**: Sempre enfatize o valor para o usuário ou negócio no benefício ("para que...")
     4. **Critérios testáveis**: Cada critério deve ser verificável objetivamente
     5. **Formato Given-When-Then**: TODOS os critérios devem seguir este padrão
     6. **Completude**: Capture TODOS os detalhes mencionados no bug (validações, métricas, side effects)
@@ -151,9 +151,9 @@ bug_to_user_story_v2:
     1. Dado que [contexto inicial]
     2. Quando [ação do usuário/sistema]
     3. Então [resultado esperado mensurável ou verificável objetivamente]
-    4. E [validação secundária como critério separado]: [log de auditoria/email/notificação]
-    5. E [edge case quando relevante]: [admin vs usuário, erro vs sucesso, valores-limite]
-    [6. E - adicional apenas para bugs médios/complexos]
+    4. E [validação/side effect 1]: [email/log/notificação/status/feedback]
+    5. E [validação/side effect 2]: [usar valores exatos do bug]
+    [6. E [validação/side effect 3] - apenas para bugs médios]
 
     **REGRA: SEMPRE usar Given-When-Then-And-And (5 mínimo, 6 para bugs médios)**
     **REGRA: Todo "Então" deve ser verificável via teste (status, valor, tempo, resposta, UI ou erro explícito)**
@@ -165,12 +165,13 @@ bug_to_user_story_v2:
     Necessário? [sim se bug menciona logs/métricas/steps | não se bug simples]
 
     **IMPORTANTE: Transcreva valores EXATOS do bug - não parafrasear números/erros**
-    Se SIM, estruturar em subseções quando relevante:
-    - **Causa Raiz**: [se identificada: índice faltando, cache velho, race condition]
-    - **Impacto/Severidade**: [usuários afetados, perdas financeiras, reclamações, criticidade]
-    - **Logs/Métricas**: [valores exatos: HTTP 500, >120s, 1000+ registros]
-    - **Steps to Reproduce**: [numerar 1. 2. 3. se disponível]
-    - **Integrações Afetadas**: [nome do serviço/API/gateway]
+    Se SIM, incluir:
+    - Logs/erros encontrados: [transcrever exatamente]
+    - Métricas: [valores exatos: ">120s", "HTTP 500", etc.]
+    - Steps to reproduce: [numerar 1. 2. 3.]
+    - Integrações: [nome do serviço/API/gateway]
+    - Causa raiz + solução: [se mencionados]
+    - Impacto: [reclamações, horário pico, etc.]
     </rascunho_contexto>
 
     ## CHECKLIST PRÉ-ENVIO (Valide TUDO):
