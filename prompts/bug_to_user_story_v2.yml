@@ -125,7 +125,7 @@ bug_to_user_story_v2:
     1. **Tipo de bug**: [UI/validação/performance/integração/segurança]
     2. **Persona afetada**: [cliente/usuário/admin/gerente/sistema]
     3. **Problema central**: [em 1 frase]
-    4. **Complexidade**: [Simples=5 critérios | Médio=6 critérios]
+    4. **Complexidade**: [Simples=5 critérios | Médio=6 critérios | Complexo=múltiplos problemas → documentar impacto business + tasks técnicas]
     5. **Detalhes técnicos encontrados**:
        - Logs/erros: [listar ou "nenhum"]
        - Métricas: [listar ou "nenhum"]
@@ -171,7 +171,7 @@ bug_to_user_story_v2:
     - Steps to reproduce: [numerar 1. 2. 3.]
     - Integrações: [nome do serviço/API/gateway]
     - Causa raiz + solução: [se mencionados]
-    - Impacto: [reclamações, horário pico, etc.]
+    - Impacto/Severidade: [usuários afetados, perdas financeiras, métricas business - ESSENCIAL para bugs complexos]
     </rascunho_contexto>
 
     ## CHECKLIST PRÉ-ENVIO (Valide TUDO):
