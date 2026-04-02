@@ -4,7 +4,7 @@
 
 Este repositório contém a implementação do desafio de pull, otimização, push e avaliação de prompts para conversão de bugs em user stories usando LangChain e LangSmith.
 
-## Técnicas Aplicadas (Fase 2)
+## A) Técnicas Aplicadas (Fase 2)
 
 O prompt otimizado [`prompts/bug_to_user_story_v2.yml`](prompts/bug_to_user_story_v2.yml) aplica 4 técnicas avançadas de prompt engineering para melhorar tom, consistência estrutural e completude das user stories geradas a partir de bugs.
 
@@ -99,21 +99,11 @@ As técnicas foram escolhidas porque atacam problemas diferentes do prompt base:
 
 O material detalhado dessa análise está em [`TECNICAS.md`](TECNICAS.md).
 
-## Resultados Finais
+## B) Resultados Finais
 
-### Links públicos no LangSmith
+### Link público do dashboard do LangSmith
 
-- Prompt otimizado publicado: `https://smith.langchain.com/prompts/casaccia/bug_to_user_story_v2`
 - Projeto de avaliação: `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d`
-- Dataset de avaliação: `desafio-prompt-engineer-eval` com 20 exemplos
-
-### Evidências de tracing
-
-Os traces abaixo foram confirmados no projeto `desafio-prompt-engineer`:
-
-- `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d/r/517f1667-c2f1-4eaf-acfd-6a8a35e31a15?trace_id=517f1667-c2f1-4eaf-acfd-6a8a35e31a15&start_time=2026-04-02T15:48:20.608886`
-- `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d/r/563d46d1-2ea1-4601-936d-9c2de1cdc4c1?trace_id=563d46d1-2ea1-4601-936d-9c2de1cdc4c1&start_time=2026-04-02T15:48:14.560848`
-- `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d/r/31106a88-c811-4570-b814-33be34d25289?trace_id=31106a88-c811-4570-b814-33be34d25289&start_time=2026-04-02T15:48:05.250839`
 
 ### Comparativo v1 vs v2
 
@@ -133,9 +123,9 @@ Também houve ganho claro em `User Story Format Score` e `Acceptance Criteria Sc
 
 ### Screenshots das avaliações
 
-As evidências principais desta entrega estão documentadas por meio dos links públicos do prompt, do projeto, do dataset e dos traces listados acima.
+Nesta versão do repositório, as evidências estão documentadas por links públicos do LangSmith. As screenshots não foram anexadas.
 
-## Como Executar
+## C) Como Executar
 
 ### Pré-requisitos
 
@@ -287,3 +277,38 @@ Critério de aprovação:
 - `User Story Format Score >= 0.9`
 - `Completeness Score >= 0.9`
 - média geral `>= 0.9`
+
+## D) Evidências no LangSmith
+
+### Link do dashboard e do prompt publicado
+
+- Prompt otimizado publicado: `https://smith.langchain.com/prompts/casaccia/bug_to_user_story_v2`
+- Dashboard do projeto de avaliação: `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d`
+
+### Dataset de avaliação
+
+- Dataset utilizado: `desafio-prompt-engineer-eval`
+- Quantidade de exemplos: `20`
+
+### Execuções dos prompts
+
+- Prompt baseline `v1` de origem: `https://smith.langchain.com/hub/leonanluppi/bug_to_user_story_v1?organizationId=ab74ea20-0cd6-49fc-95ee-5b3950b759a7`
+- Prompt `v2` otimizado publicado e usado na avaliação: `casaccia/bug_to_user_story_v2`
+- Resultado agregado documentado neste repositório:
+  - média `v1`: `0.8711`
+  - média `v2`: `0.9819`
+
+Observação:
+
+- Há trace no projeto comprovando execução do baseline `leonanluppi/bug_to_user_story_v1`:
+  - `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d/r/f82bd32f-e750-49cb-b935-5200453ec128?trace_id=2727da00-29a3-4866-a3d2-870740f3a6ee&start_time=2026-04-02T15:05:57.351898`
+- As execuções detalhadas do `v2` estão refletidas no dashboard e nos traces abaixo
+- As notas comparativas de `v1` e `v2` estão consolidadas na seção `B) Resultados Finais`
+
+### Tracing detalhado
+
+Os traces abaixo foram confirmados no projeto `desafio-prompt-engineer`:
+
+- `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d/r/517f1667-c2f1-4eaf-acfd-6a8a35e31a15?trace_id=517f1667-c2f1-4eaf-acfd-6a8a35e31a15&start_time=2026-04-02T15:48:20.608886`
+- `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d/r/563d46d1-2ea1-4601-936d-9c2de1cdc4c1?trace_id=563d46d1-2ea1-4601-936d-9c2de1cdc4c1&start_time=2026-04-02T15:48:14.560848`
+- `https://smith.langchain.com/o/ab74ea20-0cd6-49fc-95ee-5b3950b759a7/projects/p/17d5dda4-4547-4618-bf5f-7326d557be8d/r/31106a88-c811-4570-b814-33be34d25289?trace_id=31106a88-c811-4570-b814-33be34d25289&start_time=2026-04-02T15:48:05.250839`
