@@ -12,29 +12,53 @@ bug_to_user_story_v2:
     **Critérios de Aceitação:**
     - Dado que [contexto inicial]
     - Quando [ação]
-    - Então [resultado esperado]
+    - Então [resultado mensurável: status HTTP, mensagem específica, atualização de estado ou valor concreto]
     - E [validação]
-    - E [comportamento]
+    - E [cenário de erro ou edge case: ex. item duplicado, conexão perdida, campo vazio, timeout]
+    - Obrigatório: inclua pelo menos 1 edge case RELEVANTE como o último "E"
+    - Pelo menos um "Então" deve conter valor/código/mensagem EXATA copiada do bug ou referência (ex.: "<30s", "HTTP 200/403/500", "\"Estoque indisponível\"", "\"Email inválido: inclua '@'\"")
+    - Quantidade: exatamente 5 bullets (use 6 apenas para bugs médios)
+    - O último bullet DEVE iniciar com "- E [Edge case]:" e conter um "Então" mensurável na própria frase
+    - Para integrações/HTTP citadas no bug: incluir 1 critério com endpoint e código HTTP EXATO (ex.: "Então retornar HTTP 200 para POST /api/webhooks/payment") e, em caso de falha/timeout, retry com backoff + idempotência (idempotency-key) no mesmo bloco
+    - Para segurança/autorização citadas no bug: incluir 1 critério com retorno 401/403 conforme o caso, sem exposição de dados de terceiros, e registro em log de auditoria
+    - Para concorrência/limites citados no bug: incluir 1 critério garantindo operação atômica (lock/validação pós-condição), resultado único e mensagem de erro EXATA
 
     **Contexto Técnico:**
     - [Apenas quando bug incluir logs, métricas ou steps to reproduce]
 
+    **Extras opcionais (incorporar dentro dos Critérios de Aceitação, sem criar nova seção):**
+    - Para bugs de UI/modal → incluir bullets de acessibilidade (foco no modal, fechar com ESC, clicar fora para fechar) DENTRO de "Critérios de Aceitação"
+    - Para bugs com múltiplos roles → incluir bullets específicos por role DENTRO de "Critérios de Aceitação"
+    - Para bugs com valores numéricos → incluir um bullet de **Exemplo de Cálculo** com breakdown DENTRO de "Critérios de Aceitação"
+    - Para bugs de race condition/concorrência → incluir bullets de **Critérios de Prevenção** DENTRO de "Critérios de Aceitação"
+
     IMPORTANTE - Formato:
     - Use EXATAMENTE "Como um", "eu quero", "para que" (não varie!)
-    - Persona: Seja específico ("cliente", "administrador", "gerente", "o sistema")
+    - Persona: Seja ultra-específico ("cliente navegando na loja", "administrador do dashboard", "gerente de vendas", "usuário de smartphone iOS")
+    - Persona por domínio: para validações de cadastro use "novo usuário criando uma conta"; para estoque/checkout use "cliente finalizando compra"; para segurança de endpoint use "administrador do sistema"
     - Ação: Descreva o que o usuário quer fazer (não o problema)
     - Benefício: Explique o VALOR real para o negócio/usuário
     - Separe claramente: User Story → linha vazia → Critérios → linha vazia → Contexto
+    - Adeque os critérios à plataforma: EVITE instruções inapropriadas (ex.: "ESC" em iOS/Android). Para mobile, use comportamentos nativos (toque fora, botão Voltar/gesto) e termos de acessibilidade da plataforma.
+    - Não gere outras seções além de: **User Story**, **Critérios de Aceitação**, **Contexto Técnico**
 
     ## PRINCÍPIOS-CHAVE:
 
-    1. **Persona apropriada**: Use "cliente", "usuário", "administrador", "gerente", ou "o sistema" conforme contexto
+    1. **Persona apropriada (humana)**: Use "cliente", "usuário", "administrador" ou "gerente"; NUNCA use "o sistema" como persona
     2. **Tom profissional e empático**: Foque no valor e impacto no usuário
     3. **REGRA DE TOM**: Sempre enfatize o valor para o usuário ou negócio no benefício ("para que...")
     4. **Critérios testáveis**: Cada critério deve ser verificável objetivamente
     5. **Formato Given-When-Then**: TODOS os critérios devem seguir este padrão
     6. **Completude**: Capture TODOS os detalhes mencionados no bug (validações, métricas, side effects)
-    7. **Contexto Técnico**: Adicione quando o bug incluir logs, métricas, ou steps to reproduce
+    7. **Contexto Técnico**: OBRIGATÓRIO quando houver números, endpoints, stack traces, steps to reproduce ou logs no bug ou na referência (transcreva valores EXATOS)
+    8. **Aderência à plataforma**: Ajuste ações/teclas/gestos por plataforma (web/desktop vs. iOS/Android). Em mobile, evite citar teclas de teclado físico (ex.: ESC) e prefira interações nativas (toque fora, gesto de fechar, navegação padrão).
+    9. **Detalhamento técnico verificável** (quando aplicável): para integrações/HTTP, explicite endpoint e códigos de resposta (ex.: 200, 400, 403, 500), política de retry com backoff, idempotência (idempotency key), logs de auditoria e mudanças de estado.
+    10. **Segurança e autorização** (quando aplicável): inclua critérios de acesso (ex.: 401/403 sem credenciais/escopo), não exposição de dados de outros usuários e registro de tentativas de acesso indevido.
+    11. **Concorrência e integridade** (quando aplicável): inclua prevenção de duplicidade (locks transacionais/otimistas, operações atômicas, contadores consistentes) e validações pós-condição.
+    12. **Regras condicionais (OBRIGATÓRIAS quando aplicáveis)**:
+        - Se o bug mencionar endpoint/código HTTP/logs/timeout: incluir ao menos 1 "Então" com código HTTP EXATO e, em caso de falha/timeout, retry com backoff + idempotência, além de log/auditoria
+        - Se o bug mencionar acesso/ver dados de outro usuário: incluir 401/403 conforme contexto, sem vazamento de dados, e registro explícito de tentativa em log
+        - Se o bug mencionar simultaneidade/limite/última unidade: incluir validação atômica (locks/oper. atômicas), uma única conclusão válida e contador/estado consistentes
 
     ## EXEMPLOS DO DATASET:
 
@@ -70,7 +94,7 @@ bug_to_user_story_v2:
     Logs do gateway mostram: HTTP 500 ao tentar POST /api/webhooks/payment"
 
     User Story:
-    Como o sistema de e-commerce, eu quero receber notificações de pagamento aprovado via webhook, para que o status dos pedidos seja atualizado automaticamente após confirmação do pagamento.
+    Como um administrador do e-commerce, eu quero que o sistema receba notificações de pagamento aprovado via webhook, para que o status dos pedidos seja atualizado automaticamente após confirmação do pagamento.
 
     Critérios de Aceitação:
     - Dado que um pagamento é aprovado no gateway
@@ -115,6 +139,37 @@ bug_to_user_story_v2:
 
     ---
 
+    ### Exemplo 4 - Bug de Concorrência (6 critérios + Contexto):
+
+    Bug:
+    "Carrinho permite finalizar compra mesmo com produto fora de estoque.
+
+    Detalhes:
+    - SKU: 123 (apenas 1 unidade em estoque)
+    - Duas compras simultâneas concluem com sucesso
+    - Estoque fica negativo ou inconsistente"
+
+    User Story:
+    Como um cliente comprando online, eu quero que o estoque seja validado de forma atômica, para que compras simultâneas não permitam finalizar sem disponibilidade real.
+
+    Critérios de Aceitação:
+    - Dado que há 1 unidade disponível do SKU 123
+    - Quando duas compras do SKU 123 são iniciadas simultaneamente
+    - Então exatamente 1 pedido deve concluir com sucesso
+    - E o outro deve falhar com a mensagem "Estoque indisponível"
+    - E o contador de estoque deve decrementar de 1 para 0 uma única vez (nunca negativo)
+    - E o evento de tentativa concorrente deve ser registrado em log de auditoria (user_id, sku, timestamp)
+
+    Contexto Técnico:
+    - Estoque inicial: SKU 123 = 1 unidade
+    - Concurrency: duas requisições simultâneas de checkout
+    - Pós-condição: estoque consistente (0), 1 pedido criado, 1 erro "Estoque indisponível"
+    - Sugestão: operação atômica via transação/lock ou versão (optimistic locking)
+
+    ---
+
+    
+
     ## PROCESSO DE RACIOCÍNIO (CHAIN OF THOUGHT OBRIGATÓRIO):
 
     **PENSE INTERNAMENTE passo a passo antes de responder. NÃO exiba seu raciocínio.**
@@ -123,7 +178,7 @@ bug_to_user_story_v2:
 
     <analise>
     1. **Tipo de bug**: [UI/validação/performance/integração/segurança]
-    2. **Persona afetada**: [cliente/usuário/admin/gerente/sistema]
+    2. **Persona afetada**: [cliente/usuário/administrador/gerente/analista]
     3. **Problema central**: [em 1 frase]
     4. **Complexidade**: [Simples=5 critérios | Médio=6 critérios | Complexo=múltiplos problemas → documentar impacto business + tasks técnicas]
     5. **Detalhes técnicos encontrados**:
@@ -136,10 +191,11 @@ bug_to_user_story_v2:
        - [item 1]
        - [item 2]
        - [item 3]
+    7. **Seções extras necessárias**: [Critérios de Acessibilidade | Critérios Adicionais | Exemplo de Cálculo | Critérios de Prevenção | nenhuma]
     </analise>
 
     <rascunho_user_story>
-    - **Persona**: [específica - NÃO genérico "usuário"]
+    - **Persona**: [humana e específica - NUNCA "sistema"; evitar genérico "usuário"]
     - **Ação**: [o que o usuário quer fazer]
     - **Benefício**: [VALOR real para negócio/usuário]
     → User Story: Como um [persona], eu quero [ação], para que [benefício].
@@ -154,6 +210,36 @@ bug_to_user_story_v2:
     4. E [validação/side effect 1]: [email/log/notificação/status/feedback]
     5. E [validação/side effect 2]: [usar valores exatos do bug]
     [6. E [validação/side effect 3] - apenas para bugs médios]
+
+    Obrigatório: o último "E" deve ser um EDGE CASE relevante ao bug e iniciar com "- E [Edge case]: ..." já contendo um "Então ..." mensurável.
+    Requisito de mensuração: inclua pelo menos um "Então" com valor/código/mensagem EXATA (ex.: "<30s", "HTTP 200/403/500", "\"Estoque indisponível\"", "\"Email inválido: inclua '@'\"").
+    Foco do escopo: não introduza critérios que não constam no bug ou na referência; mantenha o foco no problema reportado.
+    O edge case DEVE ter um "Então" explícito com código/mensagem/valor verificável.
+    Foco do escopo: não introduza critérios que não constam no bug ou na referência; mantenha o foco no problema reportado.
+
+    Condicionais (aplicar quando aplicável ao bug):
+    - Integrações/HTTP: adicionar "Então retornar HTTP <código> para <endpoint>" e, em erro/timeout, "E executar retry com backoff garantindo idempotência (mesma idempotency-key não duplica a operação)"; "E registrar evento em log de auditoria"
+    - Segurança/Autorização: adicionar "Então retornar 401/403 conforme o caso, sem expor dados de terceiros, e registrar tentativa em log de auditoria"
+    - Concorrência/Limites: adicionar "Então garantir operação atômica (uma única conclusão válida) e pós-condição com contador/estado corretos", com mensagem de erro EXATA
+
+    Observações de ESPECIFICIDADE E EDGE CASES:
+    - Inclua pelo menos 1 edge case RELEVANTE ao domínio do bug.
+    - Exemplos:
+      • Mobile (orientação iOS/Android): rotacionar rapidamente 2–3 vezes; voltar ao modo original; split view; zoom/dynamic type não causa sobreposição; sem rolagem horizontal.
+      • Web (modais): foco inicial no modal; fechar por ESC SOMENTE em web/desktop; clicar fora fecha; trap de foco dentro do modal.
+      • Integrações/HTTP: retry com backoff em timeout; idempotência evita duplicidade; códigos exatos (200/4xx/5xx); evento registrado para auditoria.
+      • Segurança/Autorização: acesso negado (403) para recursos de outros usuários; sem vazamento de dados; tentativa registrada em log.
+      • Concorrência: múltiplas requisições simultâneas não excedem limites (ex.: cupons); uso máximo respeitado com validação atômica.
+      • Mensagens/Códigos/Valores: sempre que aplicável, especifique literalmente a mensagem de erro/sucesso, o código HTTP esperado e números/limiares citados no bug.
+      • Validação de email: "Então exibir 'Email inválido: inclua "@"' e impedir avanço" (sem adicionar casos não citados, como campo vazio, a menos que conste no bug/referência)
+      • Estoque/checkout: "Duas compras do último item → 1 sucesso, 1 erro 'Estoque indisponível', contador consistente e tentativa concorrente registrada"
+      • Estoque/checkout (reserva/comunicação): incluir pós-condição e logs → "Então registrar 'stock_reservation_conflict' (user_id, sku, timestamp)"; edge de falha de comunicação → "Então bloquear finalização e exibir 'Não foi possível validar estoque; tente novamente'"
+      • Contagem de ativos/tempo real (dashboard): "Então a contagem exibida deve ser igual ao total da lista visível"; "E refletir alterações em ≤ 2s"; Edge case: "Se o streaming falhar, Então exibir 'Não foi possível atualizar; recarregue' e não mostrar total incorreto"
+      • Números exatos no Contexto Técnico: sempre transcrever diferenças observadas (ex.: "mostra 50; real 42; diferença 8") e estados iniciais/finais (ex.: "Estoque inicial 1 → final 0")
+      • Exemplos explícitos:
+        - "Então retornar HTTP 200 para POST /api/webhooks/payment"; em falha "Então retornar HTTP 500/504" + "E executar retry (backoff) com idempotency-key" + "E registrar auditoria"
+        - "Então retornar 403 ao acessar /api/users/{id} de outro usuário" + "E registrar tentativa em log" + "E não expor dados sensíveis"
+        - "Duas compras simultâneas do último item → exatamente 1 sucesso e 1 erro ('Estoque indisponível'), com contador consistente"
 
     **REGRA: SEMPRE usar Given-When-Then-And-And (5 mínimo, 6 para bugs médios)**
     **REGRA: Todo "Então" deve ser verificável via teste (status, valor, tempo, resposta, UI ou erro explícito)**
@@ -186,9 +272,18 @@ bug_to_user_story_v2:
     ✓ Valores exatos preservados ("30 segundos", "HTTP 200", etc.)
     ✓ Contexto Técnico tem TODOS detalhes técnicos do bug
     ✓ Tom profissional e empático
+    ✓ Edge case: o último "E" é um edge case RELEVANTE e testável
+    ✓ Mensuração: há pelo menos um "Então" com valor/código/mensagem EXATA (ex.: "<30s", "HTTP 200", "Cupom esgotado")
+    ✓ Contexto Técnico: se bug ou referência citam números/endpoints/logs/steps, a seção está presente com VALORES EXATOS transcritos
+    ✓ HTTP/Integrações: há critério com endpoint+código (200/4xx/5xx), retry com backoff e idempotência quando aplicável, e log/auditoria
+    ✓ Segurança/Autorização: há 401/403 conforme o caso, nenhum dado sensível é vazado, e tentativa registrada em log
+    ✓ Concorrência: operação atômica/lock, uma única conclusão válida, contador/estado consistentes e mensagem de erro EXATA
     </checklist>
 
     ---
+
+    Verificação FINAL de conformidade (antes de gerar):
+    - Confirme que incluiu: (a) 1 edge case no último "E"; (b) pelo menos um "Então" com valor/código/mensagem EXATA; (c) Contexto Técnico com valores EXATOS quando houver números/endpoints/logs. Se alguma verificação falhar, reescreva os critérios antes de finalizar.
 
     **AGORA GERE A RESPOSTA FINAL FORMATADA** (sem as tags de raciocínio):
 

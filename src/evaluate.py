@@ -96,20 +96,30 @@ def create_evaluation_dataset(
                 break
 
         if existing_dataset:
-            print(f"   ✓ Dataset '{dataset_name}' já existe, usando existente")
-            return dataset_name
-        else:
-            dataset = client.create_dataset(dataset_name=dataset_name)
-
-            for example in examples:
-                client.create_example(
-                    dataset_id=dataset.id,
-                    inputs=example["inputs"],
-                    outputs=example["outputs"],
+            existing_count = sum(
+                1 for _ in client.list_examples(dataset_id=existing_dataset.id)
+            )
+            if existing_count == len(examples):
+                print(
+                    f"   ✓ Dataset '{dataset_name}' já existe com {existing_count} exemplos, usando existente"
                 )
+                return dataset_name
+            print(
+                f"   ⚠️  Dataset tem {existing_count} exemplos mas JSONL tem {len(examples)}. Recriando..."
+            )
+            client.delete_dataset(dataset_id=existing_dataset.id)
 
-            print(f"   ✓ Dataset criado com {len(examples)} exemplos")
-            return dataset_name
+        dataset = client.create_dataset(dataset_name=dataset_name)
+
+        for example in examples:
+            client.create_example(
+                dataset_id=dataset.id,
+                inputs=example["inputs"],
+                outputs=example["outputs"],
+            )
+
+        print(f"   ✓ Dataset criado com {len(examples)} exemplos")
+        return dataset_name
 
     except Exception as e:
         print(f"   ⚠️  Erro ao criar dataset: {e}")
@@ -120,7 +130,7 @@ def pull_prompt_from_langsmith(prompt_name: str) -> ChatPromptTemplate:
     try:
         print(f"   Puxando prompt do LangSmith Hub: {prompt_name}")
         prompt = hub.pull(prompt_name)
-        print(f"   ✓ Prompt carregado com sucesso")
+        print("✓ Prompt carregado com sucesso")
         return prompt
 
     except Exception as e:
@@ -134,17 +144,17 @@ def pull_prompt_from_langsmith(prompt_name: str) -> ChatPromptTemplate:
             print("⚠️  O prompt não foi encontrado no LangSmith Hub.\n")
             print("AÇÕES NECESSÁRIAS:")
             print("1. Verifique se você já fez push do prompt otimizado:")
-            print(f"   python src/push_prompts.py")
+            print("   python src/push_prompts.py")
             print()
             print("2. Confirme se o prompt foi publicado com sucesso em:")
-            print(f"   https://smith.langchain.com/prompts")
+            print("   https://smith.langchain.com/prompts")
             print()
             print(
                 f"3. Certifique-se de que o nome do prompt está correto: '{prompt_name}'"
             )
             print()
             print("4. Se você alterou o prompt no YAML, refaça o push:")
-            print(f"   python src/push_prompts.py")
+            print("   python src/push_prompts.py")
         else:
             print(f"Erro técnico: {e}\n")
             print("Verifique:")
@@ -206,7 +216,6 @@ def evaluate_prompt(
         acceptance_criteria_scores = []
         format_scores = []
         completeness_scores = []
-
         print("   Avaliando exemplos...")
 
         for i, example in enumerate(examples, 1):
@@ -298,9 +307,9 @@ def display_results(prompt_name: str, scores: Dict[str, float]) -> bool:
     passed = average_score >= 0.9
 
     if passed:
-        print(f"\n✅ STATUS: APROVADO (média >= 0.9)")
+        print("\n✅ STATUS: APROVADO (média >= 0.9)")
     else:
-        print(f"\n❌ STATUS: REPROVADO (média < 0.9)")
+        print("\n❌ STATUS: REPROVADO (média < 0.9)")
         print(f"⚠️  Média atual: {average_score:.4f} | Necessário: 0.9000")
 
     return passed
@@ -327,9 +336,7 @@ def main():
         return 1
 
     client = Client()
-    project_name = os.getenv(
-        "LANGCHAIN_PROJECT", "prompt-optimization-challenge-resolved"
-    )
+    project_name = os.getenv("LANGSMITH_PROJECT", "desafio-prompt-engineer")
 
     jsonl_path = "datasets/bug_to_user_story.jsonl"
 

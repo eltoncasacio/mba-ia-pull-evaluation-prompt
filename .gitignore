@@ -48,3 +48,5 @@ ENV/
 screenshots/
 results/
 .claude/
+CLAUDE.md
+AGENTS.md
